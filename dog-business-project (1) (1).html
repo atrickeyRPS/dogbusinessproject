@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Your Own Dog Business!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--yellow:#FFD93D;--orange:#FF8C42;--teal:#2EC4B6;--pink:#FF6B9D;--purple:#9B5DE5;--green:#06D6A0;--cream:#FFF8ED;--dark:#2D2D2D;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;color:var(--dark);}
+.header{background:var(--purple);padding:28px 20px 22px;text-align:center;border-bottom:6px solid var(--dark);}
+.header h1{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--yellow);text-shadow:4px 4px 0 rgba(0,0,0,0.25);}
+.header p{color:rgba(255,255,255,0.9);font-size:1rem;font-weight:700;margin-top:6px;text-transform:uppercase;letter-spacing:2px;}
+.step-nav{display:flex;overflow-x:auto;gap:8px;padding:14px 16px;background:var(--dark);border-bottom:4px solid var(--yellow);scrollbar-width:none;}
+.step-nav::-webkit-scrollbar{display:none;}
+.step-btn{flex-shrink:0;padding:8px 14px;border-radius:30px;border:3px solid transparent;font-family:'Fredoka One',cursive;font-size:0.82rem;cursor:pointer;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);transition:all 0.2s;}
+.step-btn.active{background:var(--yellow);color:var(--dark);border-color:var(--dark);box-shadow:0 4px 0 rgba(0,0,0,0.18);}
+.step-btn.completed{background:var(--green);color:var(--dark);}
+.container{max-width:860px;margin:0 auto;padding:24px 16px 60px;}
+.step-card{background:white;border-radius:20px;border:4px solid var(--dark);box-shadow:0 8px 0 rgba(0,0,0,0.15);overflow:hidden;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.step-header{padding:20px 24px 16px;display:flex;align-items:center;gap:14px;border-bottom:4px solid var(--dark);}
+.step-number{width:52px;height:52px;border-radius:50%;border:3px solid var(--dark);display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.4rem;flex-shrink:0;box-shadow:3px 3px 0 rgba(0,0,0,0.15);}
+.step-header h2{font-family:'Fredoka One',cursive;font-size:1.6rem;line-height:1.1;}
+.step-header p{font-size:0.88rem;color:#666;margin-top:3px;font-weight:600;}
+.step-body{padding:24px;}
+.anna-bubble{background:#f0f4ff;border:3px solid var(--purple);border-radius:14px;padding:14px 18px;margin-bottom:22px;font-weight:600;color:#333;line-height:1.5;position:relative;}
+.anna-bubble::before{content:'👩‍💼';font-size:1.4rem;position:absolute;top:-13px;left:14px;background:white;border-radius:50%;padding:2px;}
+.section-label{font-family:'Fredoka One',cursive;font-size:1.1rem;margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:3px;background:currentColor;opacity:0.15;border-radius:4px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-weight:800;font-size:0.88rem;margin-bottom:6px;color:#444;text-transform:uppercase;letter-spacing:0.4px;}
+.form-group input[type="text"],.form-group input[type="number"],.form-group textarea{width:100%;padding:11px 14px;border:3px solid var(--dark);border-radius:11px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;background:#fffef8;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:3px 3px 0 rgba(0,0,0,0.08);}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--purple);box-shadow:3px 3px 0 var(--purple);}
+textarea{resize:vertical;min-height:76px;}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:8px;}
+.choice-chip{padding:11px 8px;border:3px solid #ddd;border-radius:11px;text-align:center;cursor:pointer;font-weight:700;font-size:0.88rem;transition:all 0.15s;background:white;user-select:none;}
+.choice-chip .emoji{font-size:1.5rem;display:block;margin-bottom:4px;}
+.choice-chip:hover{border-color:var(--purple);background:#f5f0ff;}
+.choice-chip.selected{border-color:var(--purple);background:var(--purple);color:white;box-shadow:3px 3px 0 rgba(0,0,0,0.15);}
+.yn-grid{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.yn-label{font-weight:700;font-size:0.93rem;flex:1;min-width:150px;}
+.yn-btn{padding:8px 16px;border:3px solid #ccc;border-radius:30px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;background:white;transition:all 0.15s;}
+.yn-btn[data-val="yes"].selected{background:var(--green);border-color:#05a07a;color:white;}
+.yn-btn[data-val="no"].selected{background:#e74c3c;border-color:#c0392b;color:white;}
+.math-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.math-row .math-label{font-weight:700;min-width:160px;font-size:0.93rem;}
+.math-row input{width:100px;padding:9px 11px;border:3px solid var(--dark);border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;text-align:center;background:#fffef8;}
+.math-row input:focus{outline:none;border-color:var(--teal);}
+.math-row .op{font-size:1.2rem;font-weight:900;color:#666;}
+.data-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.9rem;}
+.data-table th{background:var(--dark);color:white;padding:10px 12px;text-align:left;font-weight:800;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.4px;}
+.data-table td{padding:9px 12px;border-bottom:2px solid #eee;font-weight:600;}
+.data-table tr:nth-child(even) td{background:#fafafa;}
+.data-table td input{width:100%;border:2px solid #ccc;border-radius:7px;padding:5px 8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.88rem;background:#fffef8;}
+.data-table td input:focus{outline:none;border-color:var(--teal);}
+.data-table td.filled{background:#fff8e6;font-weight:800;}
+.dog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin:14px 0;}
+.dog-icon{font-size:1.6rem;text-align:center;cursor:pointer;padding:6px;border-radius:8px;border:2px solid transparent;transition:all 0.15s;filter:grayscale(0.6);opacity:0.45;user-select:none;}
+.dog-icon.selected{filter:none;opacity:1;background:var(--yellow);border-color:var(--dark);transform:scale(1.1);}
+.outdoor-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border:3px solid #eee;border-radius:11px;margin-bottom:7px;cursor:pointer;transition:all 0.15s;background:white;}
+.outdoor-item:hover{border-color:var(--teal);}
+.outdoor-item.selected{border-color:var(--teal);background:#e8fdfb;}
+.outdoor-check{width:22px;height:22px;border:3px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem;}
+.outdoor-item.selected .outdoor-check{background:var(--teal);border-color:var(--teal);color:white;}
+.item-name{font-weight:800;flex:1;}
+.item-cost{font-weight:700;color:var(--orange);}
+.item-votes{font-size:0.83rem;color:#888;}
+.budget-bar{background:#eee;border:3px solid var(--dark);border-radius:30px;height:22px;overflow:hidden;margin:8px 0 5px;}
+.budget-fill{height:100%;border-radius:30px;transition:width 0.4s,background 0.4s;}
+.budget-info{display:flex;justify-content:space-between;font-weight:800;font-size:0.88rem;}
+.brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;}
+@media(max-width:520px){.brand-grid{grid-template-columns:1fr;}}
+.brand-box{border:3px solid var(--dark);border-radius:13px;padding:16px;background:#fafafa;}
+.brand-box h4{font-family:'Fredoka One',cursive;font-size:0.95rem;margin-bottom:9px;color:var(--purple);}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:18px;}
+.service-card{border:3px solid #ddd;border-radius:13px;padding:13px 8px;text-align:center;background:white;}
+.service-card .se{font-size:2rem;display:block;}
+.service-card .sn{font-family:'Fredoka One',cursive;font-size:0.9rem;margin:5px 0 2px;}
+.service-card .sp{color:var(--orange);font-weight:800;font-size:0.88rem;}
+.btn{padding:12px 24px;border-radius:13px;border:3px solid var(--dark);font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all 0.15s;box-shadow:0 4px 0 rgba(0,0,0,0.18);display:inline-flex;align-items:center;gap:7px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,0.18);}
+.btn:active{transform:translateY(2px);box-shadow:none;}
+.btn-primary{background:var(--purple);color:white;}
+.btn-success{background:var(--green);color:var(--dark);}
+.btn-secondary{background:var(--yellow);color:var(--dark);}
+.btn-row{display:flex;gap:11px;flex-wrap:wrap;margin-top:24px;padding-top:18px;border-top:3px dashed #eee;}
+.feedback{padding:13px 16px;border-radius:11px;margin:14px 0;font-weight:700;display:none;border:3px solid transparent;animation:popIn 0.25s ease;}
+@keyframes popIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
+.feedback.show{display:block;}
+.feedback.correct{background:#d4edda;border-color:#27ae60;color:#155724;}
+.feedback.incorrect{background:#fde8e8;border-color:#e74c3c;color:#721c24;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.score-badge{position:fixed;bottom:22px;right:22px;background:var(--purple);color:white;border:4px solid var(--dark);border-radius:50%;width:68px;height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;box-shadow:0 8px 0 rgba(0,0,0,0.15);z-index:99;}
+.score-badge .sn{font-size:1.3rem;line-height:1;}
+.score-badge .sl{font-size:0.58rem;opacity:0.85;letter-spacing:0.5px;}
+#intro-screen{text-align:center;padding:36px 18px;}
+#intro-screen .bigdog{font-size:4.5rem;display:block;margin-bottom:14px;animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#intro-screen h2{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--purple);margin-bottom:11px;}
+#intro-screen p{font-size:1rem;font-weight:600;color:#555;max-width:500px;margin:0 auto 22px;line-height:1.6;}
+.checklist{text-align:left;max-width:420px;margin:0 auto 26px;display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.checklist-item{display:flex;align-items:center;gap:7px;background:white;border:2px solid #eee;border-radius:9px;padding:8px 11px;font-weight:700;font-size:0.86rem;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🐶 Create Your Own Dog Business!</h1>
+  <p>A Real-World Math Project &bull; 10 Steps</p>
+</div>
+<div class="step-nav" id="stepNav">
+  <button class="step-btn" onclick="goToStep(0)">🏠 Intro</button>
+  <button class="step-btn" onclick="goToStep(1)">1. Research</button>
+  <button class="step-btn" onclick="goToStep(2)">2. Plan</button>
+  <button class="step-btn" onclick="goToStep(3)">3. Location</button>
+  <button class="step-btn" onclick="goToStep(4)">4. Loan</button>
+  <button class="step-btn" onclick="goToStep(5)">5. Blueprint</button>
+  <button class="step-btn" onclick="goToStep(6)">6. Equipment</button>
+  <button class="step-btn" onclick="goToStep(7)">7. Grooming</button>
+  <button class="step-btn" onclick="goToStep(8)">8. Costs</button>
+  <button class="step-btn" onclick="goToStep(9)">9. Outdoor</button>
+  <button class="step-btn" onclick="goToStep(10)">10. Marketing</button>
+</div>
+<div class="container">
+
+<!-- INTRO -->
+<div id="panel-0" class="step-panel active">
+<div class="step-card"><div id="intro-screen">
+  <span class="bigdog">🐕</span>
+  <h2>Welcome, Future Dog Business Owner!</h2>
+  <p>My name is Anna and I'll be your personal business assistant! Follow the 10 steps and your dog daycare will be up and running in no time. Practice real-world math including +, −, ×, ÷.</p>
+  <div class="checklist">
+    <div class="checklist-item">🔍 Do Research</div><div class="checklist-item">📋 Plan Business</div>
+    <div class="checklist-item">📍 Pick Location</div><div class="checklist-item">🏦 Get a Loan</div>
+    <div class="checklist-item">📐 Blueprint</div><div class="checklist-item">🛒 Buy Equipment</div>
+    <div class="checklist-item">✂️ Price Services</div><div class="checklist-item">🧮 Calculate Costs</div>
+    <div class="checklist-item">🌳 Outdoor Space</div><div class="checklist-item">📣 Marketing</div>
+  </div>
+  <button class="btn btn-primary" onclick="goToStep(1)">🚀 Let's Get Started!</button>
+</div></div>
+</div>
+
+<!-- STEP 1 -->
+<div id="panel-1" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#fff0f8;">
+    <div class="step-number" style="background:var(--pink);color:white;">1</div>
+    <div><h2 style="color:var(--pink);">Do Your Research</h2><p>Learn what dogs need to stay healthy!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">If you're going to start a business caring for dogs, you need as much knowledge as possible. Answer the questions below!</div>
+    <div class="section-label" style="color:var(--pink);">🥗 3 things dogs need every day</div>
+    <div class="form-group"><label>Need #1</label><input type="text" id="need1" placeholder="e.g., exercise"></div>
+    <div class="form-group"><label>Need #2</label><input type="text" id="need2" placeholder="e.g., healthy food"></div>
+    <div class="form-group"><label>Need #3</label><input type="text" id="need3" placeholder="e.g., fresh water"></div>
+    <div class="section-label" style="color:var(--pink);">🍖 Which foods are SAFE for dogs? (select all correct)</div>
+    <div class="choice-grid">
+      <div class="choice-chip" data-val="fish" onclick="toggleChip(this,'food')"><span class="emoji">🐟</span>Fish</div>
+      <div class="choice-chip" data-val="garlic" onclick="toggleChip(this,'food')"><span class="emoji">🧄</span>Garlic</div>
+      <div class="choice-chip" data-val="kibble" onclick="toggleChip(this,'food')"><span class="emoji">🫙</span>Kibble</div>
+      <div class="choice-chip" data-val="corn" onclick="toggleChip(this,'food')"><span class="emoji">🌽</span>Corn</div>
+      <div class="choice-chip" data-val="wheat" onclick="toggleChip(this,'food')"><span class="emoji">🌾</span>Wheat</div>
+      <div class="choice-chip" data-val="beef" onclick="toggleChip(this,'food')"><span class="emoji">🥩</span>Beef</div>
+      <div class="choice-chip" data-val="chocolate" onclick="toggleChip(this,'food')"><span class="emoji">🍫</span>Chocolate</div>
+      <div class="choice-chip" data-val="onion" onclick="toggleChip(this,'food')"><span class="emoji">🧅</span>Onion</div>
+      <div class="choice-chip" data-val="dogfood" onclick="toggleChip(this,'food')"><span class="emoji">🥫</span>Dog Food</div>
+    </div>
+    <div class="section-label" style="color:var(--pink);">💧 Safe liquids for dogs? YES or NO</div>
+    <div class="yn-grid"><span class="yn-label">🍇 Grape Juice</span><button class="yn-btn" data-q="grape" data-val="yes" onclick="setYN(this)">YES</button><button class="yn-btn" data-q="grape" data-val="no" onclick="setYN(this)">NO</button></div>
+    <div class="yn-grid"><span class="yn-label">🥤 Sports Drink</span><button class="yn-btn" data-q="sports" data-val="yes" onclick="setYN(this)">YES</button><button class="yn-btn" data-q="sports" data-val="no" onclick="setYN(this)">NO</button></div>
+    <div class="yn-grid"><span class="yn-label">💧 Water</span><button class="yn-btn" data-q="water" data-val="yes" onclick="setYN(this)">YES</button><button class="yn-btn" data-q="water" data-val="no" onclick="setYN(this)">NO</button></div>
+    <div class="yn-grid"><span class="yn-label">☕ Coffee</span><button class="yn-btn" data-q="coffee" data-val="yes" onclick="setYN(this)">YES</button><button class="yn-btn" data-q="coffee" data-val="no" onclick="setYN(this)">NO</button></div>
+    <div class="section-label" style="color:var(--pink);">✂️ Which grooming types do dogs need?</div>
+    <div class="choice-grid">
+      <div class="choice-chip" data-val="hairbrushing" onclick="toggleChip(this,'groom')"><span class="emoji">💇</span>Hair Brushing</div>
+      <div class="choice-chip" data-val="teeth" onclick="toggleChip(this,'groom')"><span class="emoji">🦷</span>Teeth Cleaning</div>
+      <div class="choice-chip" data-val="ear" onclick="toggleChip(this,'groom')"><span class="emoji">👂</span>Ear Cleaning</div>
+      <div class="choice-chip" data-val="eyebrow" onclick="toggleChip(this,'groom')"><span class="emoji">🤨</span>Eyebrow Waxing</div>
+      <div class="choice-chip" data-val="haircolor" onclick="toggleChip(this,'groom')"><span class="emoji">🎨</span>Hair Coloring</div>
+      <div class="choice-chip" data-val="bathing" onclick="toggleChip(this,'groom')"><span class="emoji">🛁</span>Bathing</div>
+      <div class="choice-chip" data-val="nailclip" onclick="toggleChip(this,'groom')"><span class="emoji">💅</span>Nail Clipping</div>
+    </div>
+    <div id="fb1" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep1()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(2)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div id="panel-2" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#fff7e6;">
+    <div class="step-number" style="background:var(--orange);color:white;">2</div>
+    <div><h2 style="color:var(--orange);">Plan Your Business</h2><p>Create a name and figure out your size!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Before you start a business, do some planning. Come up with a creative name and show how many dogs you'll serve!</div>
+    <div class="section-label" style="color:var(--orange);">🏷️ Business Name</div>
+    <div class="form-group">
+      <label>Use alliteration (e.g., Dandy Dog Daycare) or rhyme (e.g., Brett's Pets)</label>
+      <input type="text" id="bizName" placeholder="Type your business name here...">
+    </div>
+    <div class="section-label" style="color:var(--orange);">🐕 Size — Each 🐕 = 12 dogs. Click exactly 9 dogs to represent 108!</div>
+    <div class="dog-grid" id="dogGrid"></div>
+    <div style="font-weight:800;font-size:1rem;margin-top:8px;">Selected: <span id="dogCountNum" style="color:var(--orange)">0</span> dogs × 12 = <span id="dogTotal" style="color:var(--purple)">0</span> total</div>
+    <div id="fb2" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep2()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(3)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div id="panel-3" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#e8fdf9;">
+    <div class="step-number" style="background:var(--teal);color:white;">3</div>
+    <div><h2 style="color:var(--teal);">Pick a Location</h2><p>Calculate how much space you need!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">The local law says businesses serving dogs need at least <strong>55 square feet per dog</strong>. Let's figure out how much space you need!</div>
+    <div class="section-label" style="color:var(--teal);">📐 Space needed: 108 dogs × 55 sq ft</div>
+    <div class="math-row">
+      <span class="math-label">108 × 55 =</span>
+      <input type="number" id="sqft_ans" placeholder="?">
+      <span class="op">sq ft needed</span>
+    </div>
+    <div class="section-label" style="color:var(--teal);">🏢 Calculate each location's total price (sq ft × $/sq ft)</div>
+    <table class="data-table">
+      <thead><tr><th>Location</th><th>Sq Feet</th><th>$/Sq Ft</th><th>Sale Price</th></tr></thead>
+      <tbody>
+        <tr><td>Cozy Corner</td><td>600</td><td>$10</td><td><input type="number" class="loc-input" data-ans="6000" placeholder="$?"></td></tr>
+        <tr><td>Upstairs Loft</td><td>1,000</td><td>$12</td><td><input type="number" class="loc-input" data-ans="12000" placeholder="$?"></td></tr>
+        <tr><td>Strip Mall</td><td>1,600</td><td>$20</td><td><input type="number" class="loc-input" data-ans="32000" placeholder="$?"></td></tr>
+        <tr><td>Warehouse</td><td>3,200</td><td>$30</td><td><input type="number" class="loc-input" data-ans="96000" placeholder="$?"></td></tr>
+        <tr><td>Industrial Complex</td><td>6,000</td><td>$30</td><td><input type="number" class="loc-input" data-ans="180000" placeholder="$?"></td></tr>
+      </tbody>
+    </table>
+    <div class="form-group">
+      <label>Which location best fits your needs and why?</label>
+      <textarea id="locWhy" placeholder="The Industrial Complex because..."></textarea>
+    </div>
+    <div id="fb3" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep3()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(4)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div id="panel-4" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#f0f0ff;">
+    <div class="step-number" style="background:var(--purple);color:white;">4</div>
+    <div><h2 style="color:var(--purple);">Get a Loan</h2><p>Compare bank loans and understand interest!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Each bank will loan you <strong>$180,000</strong>. Fill in the missing table values. <em>Monthly × # Payments = Total Payments. Total − $180,000 = Interest.</em></div>
+    <table class="data-table">
+      <thead><tr><th>Bank</th><th>Monthly $</th><th># Payments</th><th>Total Payments</th><th>Interest</th></tr></thead>
+      <tbody>
+        <tr><td>Metro Mortgage</td><td class="filled">$1,600</td><td class="filled">140</td><td><input type="number" id="l1_total" data-ans="224000" placeholder="$?"></td><td class="filled">$44,000</td></tr>
+        <tr><td>World Bank</td><td class="filled">$800</td><td class="filled">300</td><td><input type="number" id="l2_total" data-ans="240000" placeholder="$?"></td><td><input type="number" id="l2_int" data-ans="60000" placeholder="$?"></td></tr>
+        <tr><td>Rocket Loans</td><td><input type="number" id="l3_pay" data-ans="5000" placeholder="$?"></td><td class="filled">40</td><td class="filled">$200,000</td><td class="filled">$20,000</td></tr>
+        <tr><td>The Loan Shack</td><td class="filled">$600</td><td class="filled">500</td><td><input type="number" id="l4_total" data-ans="300000" placeholder="$?"></td><td><input type="number" id="l4_int" data-ans="120000" placeholder="$?"></td></tr>
+      </tbody>
+    </table>
+    <div class="form-group">
+      <label>Which banks have monthly payments within your $1,500/month budget?</label>
+      <input type="text" id="loanQ1" placeholder="e.g., World Bank and The Loan Shack">
+    </div>
+    <div id="fb4" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep4()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(5)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div id="panel-5" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#e6fff5;">
+    <div class="step-number" style="background:var(--green);color:var(--dark);">5</div>
+    <div><h2 style="color:#059669;">Finish the Blueprint</h2><p>Area = Length × Width!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">You received plans from the architect. Calculate the area of each room. <strong>Area = Length × Width</strong></div>
+    <div class="section-label" style="color:#059669;">📐 Room Areas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+      <div class="form-group"><label>Small Dog Area (32 × 25)</label><input type="number" id="room_sda" data-ans="800" placeholder="sq ft"></div>
+      <div class="form-group"><label>Large Dog Area (34 × 25)</label><input type="number" id="room_lda" data-ans="850" placeholder="sq ft"></div>
+      <div class="form-group"><label>Restroom (18 × 25)</label><input type="number" id="room_rest" data-ans="450" placeholder="sq ft"></div>
+      <div class="form-group"><label>Office (16 × 25)</label><input type="number" id="room_off" data-ans="400" placeholder="sq ft"></div>
+      <div class="form-group"><label>Grooming Area (38 × 25)</label><input type="number" id="room_groom" data-ans="950" placeholder="sq ft"></div>
+      <div class="form-group"><label>Boarding Area (22 × 25)</label><input type="number" id="room_board" data-ans="550" placeholder="sq ft"></div>
+    </div>
+    <div class="section-label" style="color:#059669;">🧮 Word Problems</div>
+    <div class="form-group">
+      <label>Q2: Half the Small Dog Area covered with 8 sq ft rubber mats. How many mats? (800÷2÷8=?)</label>
+      <input type="number" id="bp_q2" data-ans="50" placeholder="# of mats">
+    </div>
+    <div class="form-group">
+      <label>Q3: Dog beds fill half the Boarding Area. Each bed = 5 sq ft. How many beds? (550÷2÷5=?)</label>
+      <input type="number" id="bp_q3" data-ans="55" placeholder="# of beds">
+    </div>
+    <div id="fb5" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep5()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(6)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 6 -->
+<div id="panel-6" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#fff5e6;">
+    <div class="step-number" style="background:var(--orange);color:white;">6</div>
+    <div><h2 style="color:var(--orange);">Purchase Equipment</h2><p>Find the best value in the catalog!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Compare catalog items and find the best value. Cheapest price doesn't always mean best deal — think about how long each item lasts!</div>
+    <div class="section-label" style="color:var(--orange);">🛁 Tubs — Small ($135, holds 1) | Large ($400, holds 3)</div>
+    <div class="form-group">
+      <label>Q1: Buy tubs to bathe exactly 11 dogs at once for LEAST money. How many of each?</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div><label style="font-size:0.8rem;text-transform:none;margin-bottom:4px;display:block;">Small tubs:</label><input type="number" id="eq_small" data-ans="2" placeholder="#" style="width:90px;padding:9px;border:3px solid #ccc;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;"></div>
+        <div><label style="font-size:0.8rem;text-transform:none;margin-bottom:4px;display:block;">Large tubs:</label><input type="number" id="eq_large" data-ans="3" placeholder="#" style="width:90px;padding:9px;border:3px solid #ccc;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;"></div>
+      </div>
+      <small style="color:#888;font-weight:600;display:block;margin-top:6px;">Hint: 2 small (2 dogs) + 3 large (9 dogs) = 11 dogs</small>
+    </div>
+    <div class="section-label" style="color:var(--orange);">🧴 Soap — Cost Per Month</div>
+    <div class="form-group"><label>Industrial Soap ($54, lasts 9 months) ÷ 9 = $ per month</label><input type="number" id="eq_ind" data-ans="6" placeholder="$"></div>
+    <div class="form-group"><label>Small Luxury Soap ($15, lasts 3 months) ÷ 3 = $ per month</label><input type="number" id="eq_lux" data-ans="5" placeholder="$"></div>
+    <div class="section-label" style="color:var(--orange);">✂️ Grooming Kit — Cost Per Year</div>
+    <div class="form-group"><label>The Pet Pal ($75, lasts 5 years) ÷ 5 = $ per year</label><input type="number" id="eq_pal" data-ans="15" placeholder="$"></div>
+    <div class="form-group"><label>The Dapper Dog ($260, lasts 20 years) ÷ 20 = $ per year</label><input type="number" id="eq_dap" data-ans="13" placeholder="$"></div>
+    <div class="section-label" style="color:var(--orange);">🏠 Crates — Cost Per Year</div>
+    <div class="form-group"><label>Deluxe Crate ($144, lasts 9 years) ÷ 9 = $ per year</label><input type="number" id="eq_deluxe" data-ans="16" placeholder="$"></div>
+    <div class="form-group"><label>Wire Crate ($60, lasts 3 years) ÷ 3 = $ per year</label><input type="number" id="eq_wire" data-ans="20" placeholder="$"></div>
+    <div id="fb6" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep6()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(7)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 7 -->
+<div id="panel-7" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#fdf0ff;">
+    <div class="step-number" style="background:var(--purple);color:white;">7</div>
+    <div><h2 style="color:var(--purple);">Price Grooming Services</h2><p>Price − Cost = Profit</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">You offer fun "outside-the-box" grooming styles! Use <strong>Price − Cost = Profit</strong> to fill in the missing values.</div>
+    <div class="services-grid">
+      <div class="service-card"><span class="se">🧔</span><div class="sn">The Hipster</div><div class="sp">$89.99</div></div>
+      <div class="service-card"><span class="se">⬜</span><div class="sn">The Minecraft</div><div class="sp">$79.99</div></div>
+      <div class="service-card"><span class="se">👽</span><div class="sn">The Force</div><div class="sp">$179.99</div></div>
+      <div class="service-card"><span class="se">💇‍♀️</span><div class="sn">The Mom</div><div class="sp">$49.99</div></div>
+      <div class="service-card"><span class="se">🕶️</span><div class="sn">The Dad</div><div class="sp">$49.99</div></div>
+      <div class="service-card"><span class="se">🎸</span><div class="sn">The Elvis</div><div class="sp">$109.99</div></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Price</th><th>Cost</th><th>Profit</th></tr></thead>
+      <tbody>
+        <tr><td>1. The Hipster</td><td class="filled">$89.99</td><td><input type="text" id="gs1_cost" data-ans="72.32" placeholder="$?"></td><td class="filled">$17.67</td></tr>
+        <tr><td>2. The Minecraft</td><td class="filled">$79.99</td><td class="filled">$31.28</td><td><input type="text" id="gs2_prof" data-ans="48.71" placeholder="$?"></td></tr>
+        <tr><td>3. The Force</td><td class="filled">$179.99</td><td><input type="text" id="gs3_cost" data-ans="160.12" placeholder="$?"></td><td class="filled">$19.87</td></tr>
+        <tr><td>4. The Mom</td><td class="filled">$49.99</td><td><input type="text" id="gs4_cost" data-ans="34.95" placeholder="$?"></td><td class="filled">$15.04</td></tr>
+        <tr><td>5. The Dad</td><td class="filled">$49.99</td><td class="filled">$23.17</td><td><input type="text" id="gs5_prof" data-ans="26.82" placeholder="$?"></td></tr>
+        <tr><td>6. The Elvis</td><td class="filled">$109.99</td><td class="filled">$52.49</td><td><input type="text" id="gs6_prof" data-ans="57.50" placeholder="$?"></td></tr>
+      </tbody>
+    </table>
+    <div class="form-group" style="margin-top:18px;">
+      <label>How much profit if 2 customers order "The Force" ($19.87 each) and 1 orders "The Hipster" ($17.67)?</label>
+      <input type="text" id="gs_q1" data-ans="57.41" placeholder="$?">
+    </div>
+    <div id="fb7" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep7()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(8)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 8 -->
+<div id="panel-8" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#e6fff5;">
+    <div class="step-number" style="background:var(--green);color:var(--dark);">8</div>
+    <div><h2 style="color:#059669;">Calculate Your Costs</h2><p>Add ingredients, then divide for cost per batch!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Homemade dog treats keep customers happy! Add the bulk ingredient costs for each recipe, then divide to find the cost per batch.</div>
+    <div class="section-label" style="color:#059669;">🦴 Peanut Butter Bones</div>
+    <p style="font-size:0.9rem;font-weight:600;color:#555;margin-bottom:10px;">Ingredients: Pumpkin $76 + Peanut Butter $55 + Eggs $34 + Flour $30 + Honey $80</p>
+    <div class="math-row">
+      <span class="math-label">Total cost:</span>
+      <input type="number" id="pb_total" data-ans="275" placeholder="$?">
+      <span class="op">÷ 5 batches =</span>
+      <input type="number" id="pb_batch" data-ans="55" placeholder="$/batch">
+    </div>
+    <div class="section-label" style="color:#059669;">🍦 Dog Ice Cream</div>
+    <p style="font-size:0.9rem;font-weight:600;color:#555;margin-bottom:10px;">Ingredients: Whole Milk $40 + Vanilla Bean $40 + Cane Sugar $33 + Salt $18 + Gelatin $17</p>
+    <div class="math-row">
+      <span class="math-label">Total cost:</span>
+      <input type="number" id="ic_total" data-ans="148" placeholder="$?">
+      <span class="op">÷ 4 batches =</span>
+      <input type="number" id="ic_batch" data-ans="37" placeholder="$/batch">
+    </div>
+    <div class="section-label" style="color:#059669;">🥓 Sweet Bacon Strips</div>
+    <p style="font-size:0.9rem;font-weight:600;color:#555;margin-bottom:10px;">Ingredients: Bacon $98 + Brown Sugar $49 + Apple Juice $47 + Maple Syrup $62</p>
+    <div class="math-row">
+      <span class="math-label">Total cost:</span>
+      <input type="number" id="sb_total" data-ans="256" placeholder="$?">
+      <span class="op">÷ 8 batches =</span>
+      <input type="number" id="sb_batch" data-ans="32" placeholder="$/batch">
+    </div>
+    <div id="fb8" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep8()">✅ Check Answers</button>
+      <button class="btn btn-secondary" onclick="goToStep(9)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 9 -->
+<div id="panel-9" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#fff0e6;">
+    <div class="step-number" style="background:var(--orange);color:white;">9</div>
+    <div><h2 style="color:var(--orange);">Build the Outdoor Space</h2><p>At least 50 votes, max $850 budget!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Dog owners voted for what they want outdoors. Pick items totaling <strong>at least 50 votes</strong> while staying within your <strong>$850 budget</strong>!</div>
+    <div style="margin-bottom:16px;">
+      <div class="budget-info">
+        <span>💰 Budget Left: <strong id="budgetLeft">$850.00</strong></span>
+        <span>🗳️ Votes: <strong id="voteCount">0</strong> / 50 needed</span>
+      </div>
+      <div class="budget-bar"><div class="budget-fill" id="budgetFill" style="width:0%;background:var(--green);"></div></div>
+    </div>
+    <div id="outdoorItems"></div>
+    <div id="fb9" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkStep9()">✅ Check Selection</button>
+      <button class="btn btn-secondary" onclick="goToStep(10)">Next Step →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STEP 10 -->
+<div id="panel-10" class="step-panel">
+<div class="step-card">
+  <div class="step-header" style="background:#f0f0ff;">
+    <div class="step-number" style="background:var(--purple);color:white;">10</div>
+    <div><h2 style="color:var(--purple);">Market Your Business</h2><p>Create branding and your social media!</p></div>
+  </div>
+  <div class="step-body">
+    <div class="anna-bubble">Time to stand out from the competition! Create your branding and set up your social media profile.</div>
+    <div class="section-label" style="color:var(--purple);">🌟 Branding</div>
+    <div class="brand-grid">
+      <div class="brand-box"><h4>✍️ Mission Statement</h4><textarea id="mission" placeholder="One sentence explaining your business purpose..."></textarea></div>
+      <div class="brand-box"><h4>📣 Catchy Slogan</h4><textarea id="slogan" placeholder="A short memorable phrase for advertising..."></textarea></div>
+    </div>
+    <div class="section-label" style="color:var(--purple);">📱 Social Media Profile Preview</div>
+    <div style="max-width:340px;margin:0 auto;border:4px solid var(--dark);border-radius:18px;overflow:hidden;box-shadow:0 8px 0 rgba(0,0,0,0.12);">
+      <div style="background:var(--dark);height:26px;display:flex;align-items:center;justify-content:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#e74c3c;"></div><div style="width:7px;height:7px;border-radius:50%;background:var(--yellow);"></div><div style="width:7px;height:7px;border-radius:50%;background:var(--green);"></div></div>
+      <div style="background:#fafafa;padding:14px;">
+        <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;">
+          <div id="profileEmoji" onclick="cycleEmoji()" style="width:58px;height:58px;background:var(--purple);border-radius:50%;border:3px solid var(--dark);display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;flex-shrink:0;user-select:none;" title="Click to change!">🐶</div>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;font-size:0.95rem;" id="profileName">Your Business Name</div>
+            <div style="font-size:0.72rem;color:#888;font-weight:700;" id="profileSlogan">Your slogan here...</div>
+            <div style="font-size:0.7rem;color:#aaa;margin-top:3px;">📍 Your City &nbsp;🌐 yoursite.com</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+          <div style="aspect-ratio:1;background:#f0f0ff;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #e0e0ff;">🐾<div style="font-size:0.55rem;font-weight:700;color:#999;">#pooches</div></div>
+          <div style="aspect-ratio:1;background:#fff0f8;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #ffe0f0;">😘<div style="font-size:0.55rem;font-weight:700;color:#999;">#smooches</div></div>
+          <div style="aspect-ratio:1;background:#fff8e6;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #ffe8b0;">✂️<div style="font-size:0.55rem;font-weight:700;color:#999;">#muttcuts</div></div>
+          <div style="aspect-ratio:1;background:#e6fff5;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #b0ffe0;">😴<div style="font-size:0.55rem;font-weight:700;color:#999;">#howisthat</div></div>
+          <div style="aspect-ratio:1;background:#fff0e6;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #ffd8b0;">🍖<div style="font-size:0.55rem;font-weight:700;color:#999;">#nomnom</div></div>
+          <div style="aspect-ratio:1;background:#f5f0ff;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #d8c0ff;">😜<div style="font-size:0.55rem;font-weight:700;color:#999;">#sillyfaces</div></div>
+          <div style="aspect-ratio:1;background:#fff5e6;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #ffd8a0;">🐾<div style="font-size:0.55rem;font-weight:700;color:#999;">#destroyers</div></div>
+          <div style="aspect-ratio:1;background:#fffbe6;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #ffe880;">😢<div style="font-size:0.55rem;font-weight:700;color:#999;">#wheresmyball</div></div>
+          <div style="aspect-ratio:1;background:#f0fff8;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.3rem;border:2px solid #a0ffd0;">🎉<div style="font-size:0.55rem;font-weight:700;color:#999;">#pawtytime</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="fb10" class="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="checkStep10()">🎉 Complete the Project!</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end container -->
+
+<div class="score-badge">
+  <span class="sn" id="scoreNum">0</span>
+  <span class="sl">POINTS</span>
+</div>
+
+<script>
+var state={currentStep:0,completed:new Set(),score:0,foods:new Set(),grooming:new Set(),yn:{}};
+var selectedDogs=0;
+var outdoorSelected=new Set();
+
+function goToStep(n){
+  document.querySelectorAll('.step-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('panel-'+n).classList.add('active');
+  state.currentStep=n;
+  document.querySelectorAll('.step-btn').forEach(function(b,i){
+    b.classList.remove('active');
+    if(i===n)b.classList.add('active');
+    if(state.completed.has(i))b.classList.add('completed');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2)initDogs();
+  if(n===9)initOutdoor();
+  if(n===10)setTimeout(function(){
+    var nm=document.getElementById('bizName');
+    var sl=document.getElementById('slogan');
+    if(nm&&nm.value)document.getElementById('profileName').textContent=nm.value;
+    if(sl&&sl.value)document.getElementById('profileSlogan').textContent=sl.value;
+  },50);
+}
+
+function toggleChip(el,group){
+  el.classList.toggle('selected');
+  var val=el.dataset.val;
+  if(group==='food'){state.foods.has(val)?state.foods.delete(val):state.foods.add(val);}
+  if(group==='groom'){state.grooming.has(val)?state.grooming.delete(val):state.grooming.add(val);}
+}
+function setYN(btn){
+  var q=btn.dataset.q;
+  document.querySelectorAll('[data-q="'+q+'"]').forEach(function(b){b.classList.remove('selected');});
+  btn.classList.add('selected');
+  state.yn[q]=btn.dataset.val;
+}
+function showFb(id,msg,type){
+  var fb=document.getElementById(id);
+  fb.textContent=msg;
+  fb.className='feedback '+type+' show';
+}
+function addScore(pts){
+  state.score+=pts;
+  document.getElementById('scoreNum').textContent=state.score;
+}
+function markComplete(step){
+  if(!state.completed.has(step)){
+    state.completed.add(step);
+    document.querySelectorAll('.step-btn')[step].classList.add('completed');
+    addScore(3);
+  }
+}
+
+function checkStep1(){
+  var correctFoods=['fish','kibble','corn','wheat','beef','dogfood'];
+  var correctGroom=['hairbrushing','teeth','ear','bathing','nailclip'];
+  var correctYN={grape:'no',sports:'yes',water:'yes',coffee:'no'};
+  var ok=true;var msgs=[];
+  var foodOk=correctFoods.every(function(f){return state.foods.has(f);})&&[...state.foods].every(function(f){return correctFoods.indexOf(f)>-1;});
+  if(!foodOk){ok=false;msgs.push('Check safe foods: fish, kibble, corn, wheat, beef, canned dog food ✓');}
+  for(var q in correctYN){if(state.yn[q]!==correctYN[q]){ok=false;msgs.push('Check your YES/NO liquid answers.');break;}}
+  var groomOk=correctGroom.every(function(g){return state.grooming.has(g);})&&[...state.grooming].every(function(g){return correctGroom.indexOf(g)>-1;});
+  if(!groomOk){ok=false;msgs.push('Check grooming: hair brushing, teeth, ear cleaning, bathing, nail clipping ✓');}
+  if(ok){showFb('fb1','🎉 Excellent dog care knowledge!','correct');markComplete(1);}
+  else{showFb('fb1','Not quite! '+msgs.join(' '),'incorrect');}
+}
+
+function initDogs(){
+  var grid=document.getElementById('dogGrid');
+  if(grid.children.length>0)return;
+  for(var i=0;i<15;i++){
+    var d=document.createElement('div');
+    d.className='dog-icon';d.textContent='🐕';d.dataset.idx=i;
+    d.onclick=(function(el){return function(){toggleDog(el);};})(d);
+    grid.appendChild(d);
+  }
+}
+function toggleDog(el){
+  el.classList.toggle('selected');
+  selectedDogs=document.querySelectorAll('.dog-icon.selected').length;
+  document.getElementById('dogCountNum').textContent=selectedDogs;
+  document.getElementById('dogTotal').textContent=selectedDogs*12;
+}
+function checkStep2(){
+  var name=document.getElementById('bizName').value.trim();
+  if(!name){showFb('fb2','Please enter a business name!','incorrect');return;}
+  if(selectedDogs!==9){showFb('fb2','You selected '+selectedDogs+' dogs ('+(selectedDogs*12)+' total). Need exactly 9 dogs to represent 108!','incorrect');return;}
+  showFb('fb2','🎉 Great! "'+name+'" — serving 108 dogs!','correct');
+  markComplete(2);
+}
+
+function checkStep3(){
+  var sqft=parseInt(document.getElementById('sqft_ans').value);
+  if(sqft!==5940){showFb('fb3','108 × 55 = 5,940 sq ft needed. Try again!','incorrect');return;}
+  var inputs=document.querySelectorAll('.loc-input');
+  var wrong=0;
+  inputs.forEach(function(i){if(parseInt(i.value)!==parseInt(i.dataset.ans))wrong++;});
+  if(wrong>0){showFb('fb3',wrong+' sale price(s) are incorrect. Check your multiplication!','incorrect');return;}
+  if(!document.getElementById('locWhy').value.trim()){showFb('fb3','Please explain your location choice!','incorrect');return;}
+  showFb('fb3','🎉 Perfect! Industrial Complex (6,000 sq ft) is the only option meeting the 5,940 sq ft requirement!','correct');
+  markComplete(3);
+}
+
+function checkStep4(){
+  var checks=[{id:'l1_total',ans:224000},{id:'l2_total',ans:240000},{id:'l2_int',ans:60000},{id:'l3_pay',ans:5000},{id:'l4_total',ans:300000},{id:'l4_int',ans:120000}];
+  var wrong=0;
+  checks.forEach(function(c){if(parseInt(document.getElementById(c.id).value)!==c.ans)wrong++;});
+  if(wrong>0){showFb('fb4',wrong+' values incorrect. Remember: Monthly × # Payments = Total; Total − $180,000 = Interest.','incorrect');return;}
+  showFb('fb4','🎉 World Bank ($800/mo) and The Loan Shack ($600/mo) fit the budget. The Loan Shack has most interest ($120,000)!','correct');
+  markComplete(4);
+}
+
+function checkStep5(){
+  var rooms=[{id:'room_sda',a:800},{id:'room_lda',a:850},{id:'room_rest',a:450},{id:'room_off',a:400},{id:'room_groom',a:950},{id:'room_board',a:550}];
+  var wrong=0;
+  rooms.forEach(function(r){if(parseInt(document.getElementById(r.id).value)!==r.a)wrong++;});
+  if(parseInt(document.getElementById('bp_q2').value)!==50)wrong++;
+  if(parseInt(document.getElementById('bp_q3').value)!==55)wrong++;
+  if(wrong>0){showFb('fb5',wrong+' answer(s) incorrect. Area=L×W. Q2: 800÷2÷8=50 mats. Q3: 550÷2÷5=55 beds.','incorrect');return;}
+  showFb('fb5','🎉 All room areas correct!','correct');
+  markComplete(5);
+}
+
+function checkStep6(){
+  var checks=[{id:'eq_small',a:2},{id:'eq_large',a:3},{id:'eq_ind',a:6},{id:'eq_lux',a:5},{id:'eq_pal',a:15},{id:'eq_dap',a:13},{id:'eq_deluxe',a:16},{id:'eq_wire',a:20}];
+  var wrong=0;
+  checks.forEach(function(c){if(parseFloat(document.getElementById(c.id).value)!==c.a)wrong++;});
+  if(wrong>0){showFb('fb6',wrong+' answer(s) incorrect. Divide price by months/years it lasts.','incorrect');return;}
+  showFb('fb6','🎉 Great value-hunting! Dapper Dog ($13/yr) beats Pet Pal ($15/yr). Deluxe Crate ($16/yr) beats Wire ($20/yr)!','correct');
+  markComplete(6);
+}
+
+function checkStep7(){
+  var checks=[{id:'gs1_cost',a:72.32},{id:'gs2_prof',a:48.71},{id:'gs3_cost',a:160.12},{id:'gs4_cost',a:34.95},{id:'gs5_prof',a:26.82},{id:'gs6_prof',a:57.50},{id:'gs_q1',a:57.41}];
+  var wrong=0;
+  checks.forEach(function(c){
+    var v=parseFloat(document.getElementById(c.id).value.replace('$',''));
+    if(Math.abs(v-c.a)>0.02)wrong++;
+  });
+  if(wrong>0){showFb('fb7',wrong+' answer(s) incorrect. Cost=Price−Profit. Profit=Price−Cost. Q: 2×$19.87+$17.67=$57.41.','incorrect');return;}
+  showFb('fb7','🎉 The Elvis ($57.50 profit) is most profitable — high price ≠ most profit!','correct');
+  markComplete(7);
+}
+
+function checkStep8(){
+  var ok=[{id:'pb_total',a:275},{id:'pb_batch',a:55},{id:'ic_total',a:148},{id:'ic_batch',a:37},{id:'sb_total',a:256},{id:'sb_batch',a:32}];
+  var wrong=0;
+  ok.forEach(function(c){if(parseInt(document.getElementById(c.id).value)!==c.a)wrong++;});
+  if(wrong>0){showFb('fb8',wrong+' answer(s) incorrect. Add recipe ingredients carefully, then divide by number of batches.','incorrect');return;}
+  showFb('fb8','🎉 PB Bones: $275÷5=$55/batch | Ice Cream: $148÷4=$37/batch | Sweet Bacon: $256÷8=$32/batch!','correct');
+  markComplete(8);
+}
+
+var outdoorData=[
+  {name:'Sprinklers',cost:60.75,votes:1},{name:'Pool',cost:206.24,votes:14},
+  {name:'Water Slide',cost:207.67,votes:10},{name:'Dog Swings',cost:40.32,votes:6},
+  {name:'Monkey Bars',cost:225.89,votes:5},{name:'Sandbox',cost:91.34,votes:5},
+  {name:'Trampoline',cost:33.50,votes:4},{name:'Tunnel',cost:15.95,votes:3},
+  {name:'Water Fountain',cost:298.13,votes:6},{name:'Playscape',cost:379.96,votes:17}
+];
+var outdoorEmojis=['💦','🏊','🛝','🪷','🍌','🏖️','🤸','🕳️','⛲','🛝'];
+
+function initOutdoor(){
+  var cont=document.getElementById('outdoorItems');
+  if(cont.children.length>0){updateBudget();return;}
+  outdoorData.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='outdoor-item';div.dataset.idx=i;
+    div.innerHTML='<div class="outdoor-check"></div><span style="font-size:1.3rem">'+outdoorEmojis[i]+'</span><span class="item-name">'+item.name+'</span><span class="item-votes">🗳️ '+item.votes+' votes</span><span class="item-cost">$'+item.cost.toFixed(2)+'</span>';
+    div.onclick=(function(idx,el){return function(){toggleOutdoor(idx,el);};})(i,div);
+    cont.appendChild(div);
+  });
+  updateBudget();
+}
+function toggleOutdoor(i,el){
+  if(outdoorSelected.has(i)){outdoorSelected.delete(i);el.classList.remove('selected');el.querySelector('.outdoor-check').textContent='';}
+  else{outdoorSelected.add(i);el.classList.add('selected');el.querySelector('.outdoor-check').textContent='✓';}
+  updateBudget();
+}
+function updateBudget(){
+  var spent=0,votes=0;
+  outdoorSelected.forEach(function(i){spent+=outdoorData[i].cost;votes+=outdoorData[i].votes;});
+  var rem=850-spent;
+  document.getElementById('budgetLeft').textContent='$'+rem.toFixed(2);
+  document.getElementById('voteCount').textContent=votes;
+  var pct=Math.min(100,(spent/850)*100);
+  var fill=document.getElementById('budgetFill');
+  fill.style.width=pct+'%';
+  fill.style.background=rem<0?'#e74c3c':rem<100?'var(--orange)':'var(--green)';
+}
+function checkStep9(){
+  var spent=0,votes=0;
+  outdoorSelected.forEach(function(i){spent+=outdoorData[i].cost;votes+=outdoorData[i].votes;});
+  if(votes<50){showFb('fb9','You have '+votes+' votes. Need at least 50!','incorrect');return;}
+  if(spent>850){showFb('fb9','Over budget by $'+(spent-850).toFixed(2)+'. Remove some items!','incorrect');return;}
+  showFb('fb9','🎉 '+votes+' votes within the $850 budget! Total: $'+spent.toFixed(2),'correct');
+  markComplete(9);
+}
+
+var emojiList=['🐶','🐕','🦮','🐩','🐾','🦴','🎀','⭐'];
+var emojiIdx=0;
+function cycleEmoji(){emojiIdx=(emojiIdx+1)%emojiList.length;document.getElementById('profileEmoji').textContent=emojiList[emojiIdx];}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var bizInput=document.getElementById('bizName');
+  var sloganInput=document.getElementById('slogan');
+  if(bizInput)bizInput.addEventListener('input',function(){document.getElementById('profileName').textContent=bizInput.value||'Your Business Name';});
+  if(sloganInput)sloganInput.addEventListener('input',function(){document.getElementById('profileSlogan').textContent=sloganInput.value||'Your slogan here...';});
+});
+
+function checkStep10(){
+  if(!document.getElementById('mission').value.trim()){showFb('fb10','Please write a mission statement!','incorrect');return;}
+  if(!document.getElementById('slogan').value.trim()){showFb('fb10','Please write a catchy slogan!','incorrect');return;}
+  showFb('fb10','🎉🎉🎉 Congratulations! You completed all 10 steps of your Dog Business Project! Amazing work! 🐶','correct');
+  markComplete(10);
+  var badge=document.getElementById('scoreNum');
+  badge.style.transition='transform 0.3s';badge.style.transform='scale(1.6)';
+  setTimeout(function(){badge.style.transform='scale(1)';},500);
+}
+
+goToStep(0);
+</script>
+</body>
+</html>
